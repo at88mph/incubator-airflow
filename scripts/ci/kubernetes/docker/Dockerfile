@@ -17,6 +17,8 @@
 
 FROM ubuntu:16.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # install deps
 RUN apt-get update -y && apt-get install -y \
         wget \
@@ -30,23 +32,32 @@ RUN apt-get update -y && apt-get install -y \
         inetutils-telnet \
         bind9utils \
         zip \
+        locales \
+        tzdata \
         unzip \
     && apt-get clean
 
+RUN dpkg-reconfigure tzdata && \
+    sed -i -e 's/# en_CA.UTF-8 UTF-8/en_CA.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    echo 'LANG="en_CA.UTF-8"' > /etc/default/locale && \
+    dpkg-reconfigure locales && \
+    update-locale LANG=en_CA.UTF-8
+
+ENV LANG=en_CA.UTF-8
 
 RUN pip install --upgrade pip
 
+COPY requirements.txt ./
+
 # Since we install vanilla Airflow, we also want to have support for Postgres and Kubernetes
-RUN pip install -U setuptools && \
-    pip install kubernetes && \
-    pip install cryptography && \
-    pip install psycopg2-binary==2.7.4  # I had issues with older versions of psycopg2, just a warning
+RUN pip install -r requirements.txt
 
 # install airflow
 COPY airflow.tar.gz /tmp/airflow.tar.gz
 RUN pip install /tmp/airflow.tar.gz
 
-COPY airflow-test-env-init.sh /tmp/airflow-test-env-init.sh
+COPY airflow-env-init.sh /tmp/airflow-env-init.sh
 
 COPY bootstrap.sh /bootstrap.sh
 RUN chmod +x /bootstrap.sh

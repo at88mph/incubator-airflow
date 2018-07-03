@@ -43,7 +43,7 @@ spec:
     spec:
       initContainers:
       - name: "init"
-        image: airflow
+        image: opencadc/apache-airflow:1.10
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: airflow-configmap
@@ -63,10 +63,10 @@ spec:
           - "bash"
         args:
           - "-cx"
-          - "./tmp/airflow-test-env-init.sh"
+          - "./tmp/airflow-env-init.sh"
       containers:
       - name: webserver
-        image: airflow
+        image: opencadc/apache-airflow:1.10
         imagePullPolicy: IfNotPresent
         ports:
         - name: webserver
@@ -105,7 +105,7 @@ spec:
 #            path: /login
 #            port: 8080
       - name: scheduler
-        image: airflow
+        image: opencadc/apache-airflow:1.10
         imagePullPolicy: IfNotPresent
         args: ["scheduler"]
         env:
