@@ -17,9 +17,8 @@
 #  specific language governing permissions and limitations      *
 #  under the License.
 
-cd /usr/local/lib/python2.7/dist-packages/airflow && \
+cd /usr/local/lib/python3.6/site-packages/airflow && \
 rm -rf /root/airflow/dags/* && \
-# cp -R dags/* /root/airflow/dags/ && \
 airflow initdb && \
 alembic upgrade heads && \
 (airflow create_user -u airflow -l User -f Airflow -e Dustin.Jenkins@nrc-cnrc.gc.ca -r Admin -p airflow || true) && \

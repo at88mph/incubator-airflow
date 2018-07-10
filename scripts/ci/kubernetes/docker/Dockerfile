@@ -15,38 +15,21 @@
 #  specific language governing permissions and limitations      *
 #  under the License.                                           *
 
-FROM ubuntu:16.04
+FROM python:3.6-stretch
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 # install deps
 RUN apt-get update -y && apt-get install -y \
         wget \
-        python-dev \
-        python-pip \
         libczmq-dev \
-        libcurlpp-dev \
         curl \
         libssl-dev \
-        git \
         inetutils-telnet \
         bind9utils \
         zip \
-        locales \
-        tzdata \
         unzip \
     && apt-get clean
-
-RUN dpkg-reconfigure tzdata && \
-    sed -i -e 's/# en_CA.UTF-8 UTF-8/en_CA.UTF-8 UTF-8/' /etc/locale.gen && \
-    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
-    echo 'LANG="en_CA.UTF-8"' > /etc/default/locale && \
-    dpkg-reconfigure locales && \
-    update-locale LANG=en_CA.UTF-8
-
-ENV LANG=en_CA.UTF-8
-
-RUN pip install --upgrade pip
 
 COPY requirements.txt ./
 
