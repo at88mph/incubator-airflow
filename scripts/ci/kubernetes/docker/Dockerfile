@@ -29,7 +29,11 @@ RUN apt-get update -y && apt-get install -y \
         bind9utils \
         zip \
         unzip \
-    && apt-get clean
+    && apt-get clean \
+    && apt-get purge -y python2.7 \
+    && apt-get -y --purge autoremove
+
+RUN pip install --upgrade pip flask
 
 COPY requirements.txt ./
 
@@ -37,8 +41,12 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 # install airflow
-COPY airflow.tar.gz /tmp/airflow.tar.gz
-RUN pip install /tmp/airflow.tar.gz
+ADD https://github.com/apache/incubator-airflow/archive/1.10.0rc1.zip /tmp/
+RUN cd /tmp \
+    && unzip 1.10.0rc1.zip \
+    && cd incubator-airflow-1.10.0rc1 \
+    && rm -rf airflow/example_dags \
+    && python setup.py install
 
 COPY airflow-env-init.sh /tmp/airflow-env-init.sh
 

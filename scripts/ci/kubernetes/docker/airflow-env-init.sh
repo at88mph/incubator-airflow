@@ -17,7 +17,7 @@
 #  specific language governing permissions and limitations      *
 #  under the License.
 
-cd /usr/local/lib/python3.6/site-packages/airflow && \
+cd /usr/local/lib/python3.6/site-packages/apache_airflow-1.10.0-py3.6.egg/airflow && \
 rm -rf /root/airflow/dags/* && \
 airflow initdb && \
 alembic upgrade heads && \
