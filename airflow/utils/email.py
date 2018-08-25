@@ -22,7 +22,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from builtins import str
 from past.builtins import basestring
 
 import importlib
@@ -41,7 +40,7 @@ from airflow.utils.log.logging_mixin import LoggingMixin
 
 def send_email(to, subject, html_content,
                files=None, dryrun=False, cc=None, bcc=None,
-               mime_subtype='mixed', mime_charset='us-ascii', **kwargs):
+               mime_subtype='mixed', mime_charset='utf-8', **kwargs):
     """
     Send email using backend specified in EMAIL_BACKEND.
     """
@@ -55,20 +54,20 @@ def send_email(to, subject, html_content,
 
 def send_email_smtp(to, subject, html_content, files=None,
                     dryrun=False, cc=None, bcc=None,
-                    mime_subtype='mixed', mime_charset='us-ascii',
+                    mime_subtype='mixed', mime_charset='utf-8',
                     **kwargs):
     """
     Send an email with html content
 
     >>> send_email('test@example.com', 'foo', '<b>Foo</b> bar', ['/dev/null'], dryrun=True)
     """
-    SMTP_MAIL_FROM = configuration.conf.get('smtp', 'SMTP_MAIL_FROM')
+    smtp_mail_from = configuration.conf.get('smtp', 'SMTP_MAIL_FROM')
 
     to = get_email_address_list(to)
 
     msg = MIMEMultipart(mime_subtype)
     msg['Subject'] = subject
-    msg['From'] = SMTP_MAIL_FROM
+    msg['From'] = smtp_mail_from
     msg['To'] = ", ".join(to)
     recipients = to
     if cc:
@@ -96,7 +95,7 @@ def send_email_smtp(to, subject, html_content, files=None,
             part['Content-ID'] = '<%s>' % basename
             msg.attach(part)
 
-    send_MIME_email(SMTP_MAIL_FROM, recipients, msg, dryrun)
+    send_MIME_email(smtp_mail_from, recipients, msg, dryrun)
 
 
 def send_MIME_email(e_from, e_to, mime_msg, dryrun=False):
